@@ -15,9 +15,17 @@ class FireviewWindows extends StatefulWidget {
 
 class _FireviewWindowsState extends State<FireviewWindows> {
   @override
+  void initState() {
+    (widget.controller.realController as WebviewController).ready.then((value) {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Webview(
-      widget.controller.realController,
+      widget.controller.realController as WebviewController,
     );
   }
 }

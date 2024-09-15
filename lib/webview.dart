@@ -18,11 +18,11 @@ class Fireview extends StatefulWidget {
 class _FireviewState extends State<Fireview> {
   @override
   Widget build(BuildContext context) {
-    if (!UniversalPlatform.isWindows) {
+    if (UniversalPlatform.isWindows) {
       return FireviewWindows(
         controller: widget.controller,
       );
-    } else if (!UniversalPlatform.isLinux) {
+    } else if (UniversalPlatform.isLinux) {
       return FireviewLinux(
         controller: widget.controller,
       );
