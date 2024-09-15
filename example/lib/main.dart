@@ -43,9 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     controller.initialize(
-      Uri.parse('https://flutter.dev'),
+      Uri.parse('https://youtube.com'),
     );
-    print("init!");
   }
 
   @override

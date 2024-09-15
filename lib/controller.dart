@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iframe_webview/webview_flutter_web.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:webview_cef/webview_cef.dart';
-// import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
 import 'package:webview_windows/webview_windows.dart';
-import 'package:webview_flutter/webview_flutter.dart' as mobile_webview;
+import 'package:webview_flutter/webview_flutter.dart' as webview;
 
 /// Controller for the Fireview widget
 class FireviewController {
@@ -15,12 +17,8 @@ class FireviewController {
       await (realController as WebviewController).loadUrl(url.toString());
     } else if (UniversalPlatform.isLinux) {
       await (realController as WebViewController).loadUrl(url.toString());
-    } else if (UniversalPlatform.isWeb) {
-      // (realController as PlatformWebViewController).loadRequest(
-      //   LoadRequestParams(uri: url),
-      // );
-    } else if (UniversalPlatform.isMobile) {
-      (realController as mobile_webview.WebViewController).loadRequest(url);
+    } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
+      (realController as webview.WebViewController).loadRequest(url);
     }
   }
 
@@ -61,16 +59,18 @@ class FireviewController {
       return await (realController as WebViewController)
           .initialize(url.toString());
     } else if (UniversalPlatform.isWeb) {
-      // realController = PlatformWebViewController(
-      //   const PlatformWebViewControllerCreationParams(),
-      // )..loadRequest(
-      //     LoadRequestParams(
-      //       uri: Uri.parse(url.toString()),
-      //     ),
-      //   );
+      late final PlatformWebViewController platform;
+      if (WebViewPlatform.instance is WebWebViewPlatform) {
+        platform = WebWebViewController(WebWebViewControllerCreationParams());
+      } else {
+        platform = PlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+      }
+      realController = webview.WebViewController.fromPlatform(platform);
+      print("set from platform!");
+      loadUrl(url);
     } else if (UniversalPlatform.isMobile) {
-      mobile_webview.WebViewController controller =
-          mobile_webview.WebViewController();
+      webview.WebViewController controller = webview.WebViewController();
 
       loadUrl(url);
 
