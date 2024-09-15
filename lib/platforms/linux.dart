@@ -16,8 +16,16 @@ class FireviewLinux extends StatefulWidget {
 class _FireviewLinuxState extends State<FireviewLinux> {
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      widget.controller.realController as WebViewController,
+    return ValueListenableBuilder(
+      valueListenable: (widget.controller.realController as WebViewController),
+      builder: (context, value, child) {
+        return (widget.controller.realController as WebViewController).value
+            ? Expanded(
+                child: (widget.controller.realController as WebViewController)
+                    .webviewWidget)
+            : (widget.controller.realController as WebViewController)
+                .loadingWidget;
+      },
     );
   }
 }
