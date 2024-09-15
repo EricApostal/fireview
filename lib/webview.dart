@@ -1,5 +1,6 @@
 import 'package:fireview/controller.dart';
 import 'package:fireview/platforms/linux.dart';
+import 'package:fireview/platforms/mobile.dart';
 import 'package:fireview/platforms/web.dart';
 import 'package:fireview/platforms/windows.dart';
 import 'package:flutter/widgets.dart';
@@ -24,7 +25,9 @@ class _FireviewState extends State<Fireview> {
     } else if (UniversalPlatform.isLinux) {
       return FireviewLinux(controller: widget.controller);
     } else if (UniversalPlatform.isWeb) {
-      return FireviewWeb(controller: widget.controller);
+      // return FireviewWeb(controller: widget.controller);
+    } else if (UniversalPlatform.isMobile) {
+      return FireviewMobile(controller: widget.controller);
     }
     return const Text("platform not supported");
   }

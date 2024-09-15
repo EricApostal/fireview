@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:webview_cef/webview_cef.dart';
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+// import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_windows/webview_windows.dart';
+import 'package:webview_flutter/webview_flutter.dart' as mobile_webview;
 
 /// Controller for the Fireview widget
 class FireviewController {
   dynamic realController;
-
-  // FireviewController() {
-  // }
 
   /// Navigate to the given [url]
   Future<void> loadUrl(Uri url) async {
@@ -18,9 +16,11 @@ class FireviewController {
     } else if (UniversalPlatform.isLinux) {
       await (realController as WebViewController).loadUrl(url.toString());
     } else if (UniversalPlatform.isWeb) {
-      (realController as PlatformWebViewController).loadRequest(
-        LoadRequestParams(uri: url),
-      );
+      // (realController as PlatformWebViewController).loadRequest(
+      //   LoadRequestParams(uri: url),
+      // );
+    } else if (UniversalPlatform.isMobile) {
+      (realController as mobile_webview.WebViewController).loadRequest(url);
     }
   }
 
@@ -56,18 +56,25 @@ class FireviewController {
     } else if (UniversalPlatform.isLinux) {
       realController = WebviewManager()
           .createWebView(loading: const Text("not initialized"));
-      await WebviewManager().initialize(userAgent: "test/userAgent");
+      await WebviewManager().initialize();
 
       return await (realController as WebViewController)
           .initialize(url.toString());
     } else if (UniversalPlatform.isWeb) {
-      realController = PlatformWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      )..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(url.toString()),
-          ),
-        );
+      // realController = PlatformWebViewController(
+      //   const PlatformWebViewControllerCreationParams(),
+      // )..loadRequest(
+      //     LoadRequestParams(
+      //       uri: Uri.parse(url.toString()),
+      //     ),
+      //   );
+    } else if (UniversalPlatform.isMobile) {
+      mobile_webview.WebViewController controller =
+          mobile_webview.WebViewController();
+
+      loadUrl(url);
+
+      realController = controller;
     }
     return Future.value();
   }
