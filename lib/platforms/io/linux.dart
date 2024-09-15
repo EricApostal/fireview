@@ -2,18 +2,18 @@ import 'package:fireview/controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_cef/webview_cef.dart';
 
-class FireviewLinux extends StatefulWidget {
+class FireviewLinuxWidget extends StatefulWidget {
   final FireviewController controller;
-  const FireviewLinux({
+  const FireviewLinuxWidget({
     super.key,
     required this.controller,
   });
 
   @override
-  State<FireviewLinux> createState() => _FireviewLinuxState();
+  State<FireviewLinuxWidget> createState() => _FireviewLinuxWidgetState();
 }
 
-class _FireviewLinuxState extends State<FireviewLinux> {
+class _FireviewLinuxWidgetState extends State<FireviewLinuxWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(

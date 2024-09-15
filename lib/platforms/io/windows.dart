@@ -2,18 +2,18 @@ import 'package:fireview/controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_windows/webview_windows.dart';
 
-class FireviewWindows extends StatefulWidget {
+class FireviewWindowsWidget extends StatefulWidget {
   final FireviewController controller;
-  const FireviewWindows({
+  const FireviewWindowsWidget({
     super.key,
     required this.controller,
   });
 
   @override
-  State<FireviewWindows> createState() => _FireviewWindowsState();
+  State<FireviewWindowsWidget> createState() => _FireviewWindowsState();
 }
 
-class _FireviewWindowsState extends State<FireviewWindows> {
+class _FireviewWindowsState extends State<FireviewWindowsWidget> {
   @override
   void initState() {
     (widget.controller.realController as WebviewController).ready.then((value) {

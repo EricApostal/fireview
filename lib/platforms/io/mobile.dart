@@ -2,23 +2,18 @@ import 'package:fireview/controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class FireviewMobile extends StatefulWidget {
+class FireviewMobileWidget extends StatefulWidget {
   final FireviewController controller;
-  const FireviewMobile({
+  const FireviewMobileWidget({
     super.key,
     required this.controller,
   });
 
   @override
-  State<FireviewMobile> createState() => _FireviewMobileState();
+  State<FireviewMobileWidget> createState() => _FireviewWidgetState();
 }
 
-class _FireviewMobileState extends State<FireviewMobile> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _FireviewWidgetState extends State<FireviewMobileWidget> {
   @override
   Widget build(BuildContext context) {
     return WebViewWidget(controller: widget.controller.realController);
