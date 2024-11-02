@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iframe_webview/webview_flutter_web.dart';
+// import 'package:flutter_iframe_webview/webview_flutter_web.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:webview_cef/webview_cef.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
@@ -58,17 +58,17 @@ class FireviewController {
 
       return await (realController as WebViewController)
           .initialize(url.toString());
-    } else if (UniversalPlatform.isWeb) {
-      late final PlatformWebViewController platform;
-      if (WebViewPlatform.instance is WebWebViewPlatform) {
-        platform = WebWebViewController(WebWebViewControllerCreationParams());
-      } else {
-        platform = PlatformWebViewController(
-            const PlatformWebViewControllerCreationParams());
-      }
-      realController = webview.WebViewController.fromPlatform(platform);
-      print("set from platform!");
-      loadUrl(url);
+    // } else if (UniversalPlatform.isWeb) {
+    //   late final PlatformWebViewController platform;
+    //   if (WebViewPlatform.instance is WebWebViewPlatform) {
+    //     platform = WebWebViewController(WebWebViewControllerCreationParams());
+    //   } else {
+    //     platform = PlatformWebViewController(
+    //         const PlatformWebViewControllerCreationParams());
+    //   }
+    //   realController = webview.WebViewController.fromPlatform(platform);
+    //   print("set from platform!");
+    //   loadUrl(url);
     } else if (UniversalPlatform.isMobile) {
       webview.WebViewController controller = webview.WebViewController();
 
