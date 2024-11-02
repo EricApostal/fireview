@@ -33,8 +33,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void goToUrl() {
     setState(() {
+      print("loading url...");
       controller.loadUrl(
-        Uri.parse('https://google.com'),
+        Uri.parse('https://flutter.dev'),
       );
     });
   }
@@ -43,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     controller.initialize(
-      Uri.parse('https://youtube.com'),
+      Uri.parse('https://flutter.dev'),
     );
   }
 

@@ -3,8 +3,8 @@ import 'package:fireview/platforms/linux.dart';
 import 'package:fireview/platforms/mobile.dart';
 import 'package:fireview/platforms/windows.dart';
 
-// import 'package:fireview/platforms/web_stub.dart'
-//     if (dart.library.html) 'package:fireview/platforms/web.dart';
+import 'package:fireview/platforms/web_stub.dart'
+    if (dart.library.html) 'package:fireview/platforms/web.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -28,8 +28,8 @@ class Fireview extends StatelessWidget {
     } else if (UniversalPlatform.isWindows) {
       return FireviewWindowsWidget(controller: controller);
     } else if (UniversalPlatform.isWeb) {
-      // return FireviewWebWidget(controller: widget.controller);
+      return FireviewWebWidget(controller: controller);
     }
-    return Container();
+    return const Center(child:  Text("We could not recognize your device, and cannot load the webview."));
   }
 }
