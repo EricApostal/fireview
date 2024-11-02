@@ -9,8 +9,6 @@ import 'package:fireview/platforms/web_stub.dart'
 import 'package:flutter/widgets.dart';
 import 'package:universal_platform/universal_platform.dart';
 
-
-
 class Fireview extends StatelessWidget {
   final FireviewController controller;
 

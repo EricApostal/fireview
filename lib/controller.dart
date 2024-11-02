@@ -7,9 +7,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'package:webview_windows/webview_windows.dart';
 import 'package:webview_flutter/webview_flutter.dart' as webview;
 
-// import 'package:flutter_iframe_webview/webview_flutter_web.dart';
 import 'stubs/webview_web_stub.dart' if (dart.library.html) 'views/webview_web.dart';
-// import 'views/webview_web.dart';
 
 /// Controller for the Fireview widget
 class FireviewController {
@@ -22,7 +20,6 @@ class FireviewController {
     } else if (UniversalPlatform.isLinux) {
       await (realController as WebViewController).loadUrl(url.toString());
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
-      print("loading: $url");
       (realController as webview.WebViewController).loadRequest(url);
     }
   }
@@ -58,7 +55,7 @@ class FireviewController {
       return await loadUrl(url);
     } else if (UniversalPlatform.isLinux) {
       realController = WebviewManager()
-          .createWebView(loading: const Text("not initialized"));
+          .createWebView(loading: const Text("Webview has not been initialized..."));
       await WebviewManager().initialize();
 
       return await (realController as WebViewController)
@@ -66,17 +63,18 @@ class FireviewController {
     } else if (UniversalPlatform.isWeb) {
       late final PlatformWebViewController platform;
       if (WebViewPlatform.instance is WebWebViewPlatform) {
-        platform = WebWebViewController(WebWebViewControllerCreationParams());
+        platform = WebWebViewController(const WebWebViewControllerCreationParams());
       } else {
         platform = PlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
       }
       realController = webview.WebViewController.fromPlatform(platform);
-      print("set from platform!");
-      loadUrl(url);
     } else if (UniversalPlatform.isMobile) {
       webview.WebViewController controller = webview.WebViewController();
+      realController = controller;
 
+      print("loading URL on mobile!");
+      print(url);
       loadUrl(url);
 
       realController = controller;
