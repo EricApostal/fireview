@@ -266,9 +266,6 @@ class FireviewController {
     if (UniversalPlatform.isWindows) {
       await evaluateJavascript('delete window.$name');
     } else if (UniversalPlatform.isLinux) {
-      // Set empty channel set to remove all channels (since we can't remove individual ones)
-      await (realController as WebViewController)
-          .setJavaScriptChannels({});
       await evaluateJavascript('delete window.$name');
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
       await (realController as webview.WebViewController)
