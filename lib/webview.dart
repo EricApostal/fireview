@@ -3,7 +3,7 @@ import 'package:fireview/platforms/linux.dart';
 import 'package:fireview/platforms/mobile.dart';
 import 'package:fireview/platforms/windows.dart';
 
-import 'package:fireview/platforms/web_stub.dart'
+import 'package:fireview/stubs/web_stub.dart'
     if (dart.library.html) 'package:fireview/platforms/web.dart';
 
 import 'package:flutter/widgets.dart';
