@@ -35,7 +35,6 @@ class _BrowserPageState extends State<BrowserPage> {
   String currentUrl = 'https://flutter.dev';
   String? pageTitle;
   String? currentUserAgent;
-  bool isJavaScriptEnabled = true;
   
   // Store messages from JavaScript channels
   List<String> jsMessages = [];
@@ -111,20 +110,6 @@ class _BrowserPageState extends State<BrowserPage> {
     });
   }
 
-  Future<void> _toggleJavaScript() async {
-    setState(() {
-      isJavaScriptEnabled = !isJavaScriptEnabled;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'JavaScript ${isJavaScriptEnabled ? 'enabled' : 'disabled'}'
-        ),
-      ),
-    );
-  }
-
   Future<void> _testJavaScript() async {
     try {
       await controller.evaluateJavascript('''
@@ -169,7 +154,6 @@ class _BrowserPageState extends State<BrowserPage> {
               const SizedBox(height: 8),
               Text('User Agent: ${currentUserAgent ?? "Unknown"}'),
               const SizedBox(height: 8),
-              Text('JavaScript: ${isJavaScriptEnabled ? "Enabled" : "Disabled"}'),
               const SizedBox(height: 16),
               const Text('Recent JavaScript Messages:', style: TextStyle(fontWeight: FontWeight.bold)),
               ...jsMessages.map((msg) => Padding(
@@ -238,12 +222,6 @@ class _BrowserPageState extends State<BrowserPage> {
                   icon: const Icon(Icons.more_vert),
                   tooltip: 'More options',
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      onTap: _toggleJavaScript,
-                      child: Text(
-                        '${isJavaScriptEnabled ? 'Disable' : 'Enable'} JavaScript'
-                      ),
-                    ),
                     PopupMenuItem(
                       onTap: _testJavaScript,
                       child: const Text('Test JavaScript'),
