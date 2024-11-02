@@ -56,7 +56,6 @@ class _BrowserPageState extends State<BrowserPage> {
   Future<void> _initializeWebView() async {
     await controller.initialize(
       Uri.parse(currentUrl),
-      javascriptEnabled: true,
       userAgent: 'Flutter Browser 1.0',
     );
     
@@ -116,7 +115,7 @@ class _BrowserPageState extends State<BrowserPage> {
     setState(() {
       isJavaScriptEnabled = !isJavaScriptEnabled;
     });
-    await controller.setJavaScriptMode(isJavaScriptEnabled);
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

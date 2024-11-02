@@ -19,9 +19,10 @@ Fireview is pretty simple. Essentially, we take several WebView libraries, and r
 
 ```dart
 final FireviewController controller = FireviewController();
+
+// initializes and navigates to the provided url
 await controller.initialize(
-    Uri.parse(currentUrl),
-    javascriptEnabled: true,
+    Uri.parse("https://www.google.com/"),
     userAgent: 'Flutter Browser 1.0',
 );
 

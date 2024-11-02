@@ -12,7 +12,6 @@ import 'stubs/webview_web_stub.dart' if (dart.library.html) 'views/webview_web.d
 class FireviewController {
   dynamic realController;
   bool _isInitialized = false;
-  bool _javascriptEnabled = true;
   
   final Map<String, void Function(String)> _jsChannels = {};
 
@@ -30,11 +29,9 @@ class FireviewController {
   /// Initialize the webview with the given [url] and optional settings
   Future<void> initialize(
     Uri url, {
-    bool javascriptEnabled = true,
     String? userAgent,
     Map<String, String> headers = const {},
   }) async {
-    _javascriptEnabled = javascriptEnabled;
 
     if (UniversalPlatform.isWindows) {
       realController = windows.WebviewController();
@@ -90,14 +87,12 @@ class FireviewController {
       if (userAgent != null) {
         await setUserAgent(userAgent);
       }
-      await setJavaScriptMode(javascriptEnabled);
       await loadUrl(url, headers: headers);
     } else if (UniversalPlatform.isMobile) {
       webview.WebViewController controller = webview.WebViewController();
       await controller.setJavaScriptMode(
-        javascriptEnabled 
-          ? webview.JavaScriptMode.unrestricted 
-          : webview.JavaScriptMode.disabled
+        // not every library supports enabling / disabling javascript
+           webview.JavaScriptMode.unrestricted
       );
       
       // Set up Mobile title change listener
@@ -160,19 +155,6 @@ class FireviewController {
     }
   }
 
-  /// Enable or disable JavaScript execution
-  Future<void> setJavaScriptMode(bool enabled) async {
-    if (!_isInitialized) return;
-    
-    _javascriptEnabled = enabled;
-    if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
-      await (realController as webview.WebViewController).setJavaScriptMode(
-        enabled 
-          ? webview.JavaScriptMode.unrestricted 
-          : webview.JavaScriptMode.disabled
-      );
-    }
-  }
 
   /// Set the user agent string
   Future<void> setUserAgent(String userAgent) async {
@@ -189,7 +171,7 @@ class FireviewController {
 
   /// Get the current page title
   Future<String?> getTitle() async {
-    if (!_isInitialized || !_javascriptEnabled) return null;
+    if (!_isInitialized) return null;
     
     try {
       if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
@@ -208,7 +190,7 @@ class FireviewController {
     String name,
     void Function(String) onMessage,
   ) async {
-    if (!_isInitialized || !_javascriptEnabled) return;
+    if (!_isInitialized) return;
 
     _jsChannels[name] = onMessage;
 
@@ -295,7 +277,7 @@ class FireviewController {
 
   /// Evaluate JavaScript code in the webview
   Future<dynamic> evaluateJavascript(String code) async {
-    if (!_isInitialized || !_javascriptEnabled) {
+    if (!_isInitialized) {
       throw UnsupportedError('JavaScript execution is disabled');
     }
     
