@@ -1,14 +1,19 @@
 ## Fireview
 An all-in-one solution for inline WebView.
 
+Warning: This is a work in progress. While we intend to cover 100% of the the controller's functionality, some features are not yet supported on every platform (such as the page title listener on web).
+
 ## Features
 Fireview is a cross-platform WebView supports all major platforms.
 
-Here's how it works
+Here's the stack:
 - `webview_flutter` backs Android, iOS, and macOS
-- `flutter_iframe_webview` backs web
+- `flutter_iframe_webview` backs Web
 - `webview_windows` backs Windows
-- `webview_cef` backs linux
+- `webview_cef` backs Linux *warning: this has a large bundle size because we embed chromium*
+
+*Note: At the current moment, Windows will still compile `webview_cef`, but will use `webview_windows`. This is not intended behavior and it will be tweaked to only depend on `webview_windows` in the near future.*
+
 
 ## How to get working
 You can generally just refer to the documentation for the individual packages. The only platform you need extra work for is for Linux, and that can be done by following the Linux instructions at https://github.com/hlwhl/webview_cef.
