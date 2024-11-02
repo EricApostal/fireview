@@ -6,7 +6,7 @@ import 'package:webview_cef/webview_cef.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_windows/webview_windows.dart' as windows;
 import 'package:webview_flutter/webview_flutter.dart' as webview;
-import 'stubs/webview_web_stub.dart' if (dart.library.html) 'views/webview_web.dart';
+import 'stubs/webview_web_stub.dart' if (dart.library.html) 'platforms/webview_web.dart';
 
 /// Controller for the Fireview widget that provides a unified API across platforms
 class FireviewController {
@@ -67,7 +67,8 @@ class FireviewController {
     } else if (UniversalPlatform.isWeb) {
       late final PlatformWebViewController platform;
       if (WebViewPlatform.instance is WebWebViewPlatform) {
-        platform = WebWebViewController(const WebWebViewControllerCreationParams());
+        // ignore: prefer_const_constructors
+        platform = WebWebViewController(WebWebViewControllerCreationParams());
       } else {
         platform = PlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
