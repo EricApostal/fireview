@@ -35,21 +35,29 @@ class _BrowserPageState extends State<BrowserPage> {
   String currentUrl = 'https://flutter.dev';
   String? pageTitle;
   String? currentUserAgent;
-  
+
   // Store messages from JavaScript channels
   List<String> jsMessages = [];
-  
+
   @override
   void initState() {
     super.initState();
     urlController.text = currentUrl;
     _initializeWebView();
-        controller.titleStream.listen((title) {
+    controller.titleStream.listen((title) {
       setState(() {
         pageTitle = title;
       });
     });
 
+    controller.urlStream.listen((url) {
+      setState(() {
+        if (url != null) {
+          currentUrl = url.toString();
+          urlController.text = url.toString();
+        }
+      });
+    });
   }
 
   Future<void> _initializeWebView() async {
@@ -57,7 +65,7 @@ class _BrowserPageState extends State<BrowserPage> {
       Uri.parse(currentUrl),
       userAgent: 'Flutter Browser 1.0',
     );
-    
+
     // Set up JavaScript channel for communication
     await controller.addJavaScriptChannel(
       'Flutter',
@@ -70,11 +78,10 @@ class _BrowserPageState extends State<BrowserPage> {
         });
       },
     );
-    
- 
+
     // Get current user agent
     _getCurrentUserAgent();
-    
+
     setState(() {
       isLoading = false;
     });
@@ -82,9 +89,8 @@ class _BrowserPageState extends State<BrowserPage> {
 
   Future<void> _getCurrentUserAgent() async {
     try {
-      final userAgent = await controller.evaluateJavascript(
-        'navigator.userAgent'
-      );
+      final userAgent =
+          await controller.evaluateJavascript('navigator.userAgent');
       setState(() {
         currentUserAgent = userAgent?.toString();
       });
@@ -104,7 +110,7 @@ class _BrowserPageState extends State<BrowserPage> {
     });
 
     await controller.loadUrl(Uri.parse(url));
-    
+
     setState(() {
       isLoading = false;
     });
@@ -127,12 +133,9 @@ class _BrowserPageState extends State<BrowserPage> {
 
   Future<void> _setCookie() async {
     final Uri currentUri = Uri.parse(currentUrl);
-    await controller.setCookie(
-      currentUri.host,
-      'flutter_test',
-      'cookie_value_${DateTime.now().millisecondsSinceEpoch}'
-    );
-    
+    await controller.setCookie(currentUri.host, 'flutter_test',
+        'cookie_value_${DateTime.now().millisecondsSinceEpoch}');
+
     // Verify cookie was set by reading it with JavaScript
     final cookieValue = await controller.evaluateJavascript('document.cookie');
     ScaffoldMessenger.of(context).showSnackBar(
@@ -155,11 +158,12 @@ class _BrowserPageState extends State<BrowserPage> {
               Text('User Agent: ${currentUserAgent ?? "Unknown"}'),
               const SizedBox(height: 8),
               const SizedBox(height: 16),
-              const Text('Recent JavaScript Messages:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Recent JavaScript Messages:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               ...jsMessages.map((msg) => Padding(
-                padding: const EdgeInsets.only(left: 8.0, top: 4.0),
-                child: Text('• $msg'),
-              )),
+                    padding: const EdgeInsets.only(left: 8.0, top: 4.0),
+                    child: Text('• $msg'),
+                  )),
             ],
           ),
         ),
@@ -177,7 +181,8 @@ class _BrowserPageState extends State<BrowserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(pageTitle ?? 'Loading...', 
+        title: Text(
+          pageTitle ?? 'Loading...',
           style: const TextStyle(fontSize: 14),
           overflow: TextOverflow.ellipsis,
         ),

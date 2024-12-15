@@ -6,22 +6,30 @@ import 'package:webview_cef/webview_cef.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_windows/webview_windows.dart' as windows;
 import 'package:webview_flutter/webview_flutter.dart' as webview;
-import 'stubs/webview_web_stub.dart' if (dart.library.html) 'platforms/webview_web.dart';
+import 'stubs/webview_web_stub.dart'
+    if (dart.library.html) 'platforms/webview_web.dart';
 
 /// Controller for the Fireview widget that provides a unified API across platforms
 class FireviewController {
   dynamic realController;
   bool _isInitialized = false;
-  
+
   final Map<String, void Function(String)> _jsChannels = {};
 
-    // Stream controller for title updates
+  // Stream controller for title updates
   final _titleController = StreamController<String?>.broadcast();
+
+  // Stream controller for URL updates
+  final _urlController = StreamController<Uri?>.broadcast();
 
   /// Stream of title updates
   Stream<String?> get titleStream => _titleController.stream;
 
+  /// Stream of url updates
+  Stream<Uri?> get urlStream => _urlController.stream;
+
   final List<void Function(String?)> _titleChangeListeners = [];
+  final List<void Function(Uri?)> _urlChangeListeners = [];
 
   /// Get the initialization status
   bool get isInitialized => _isInitialized;
@@ -32,26 +40,46 @@ class FireviewController {
     String? userAgent,
     Map<String, String> headers = const {},
   }) async {
+    // Set up title stream subscription to notify listeners
+    _titleController.stream.listen((title) {
+      for (final listener in _titleChangeListeners) {
+        listener(title);
+      }
+    });
+
+    // Set up URL stream subscription to notify listeners
+    _urlController.stream.listen((url) {
+      for (final listener in _urlChangeListeners) {
+        listener(url);
+      }
+    });
 
     if (UniversalPlatform.isWindows) {
       realController = windows.WebviewController();
       await (realController as windows.WebviewController).initialize();
       if (userAgent != null) {
-        await (realController as windows.WebviewController).setUserAgent(userAgent);
+        await (realController as windows.WebviewController)
+            .setUserAgent(userAgent);
       }
-      
+
       (realController as windows.WebviewController).title.listen((title) {
         _titleController.add(title);
       });
-      
-      await (realController as windows.WebviewController).addScriptToExecuteOnDocumentCreated('''
+
+      // Listen for URL changes in Windows
+      (realController as windows.WebviewController).url.listen((navigation) {
+        _urlController.add(Uri.parse(navigation));
+      });
+
+      await (realController as windows.WebviewController)
+          .addScriptToExecuteOnDocumentCreated('''
         window.chrome.webview.addEventListener('message', function(event) {
           if (event.data.channel && window[event.data.channel]) {
             window[event.data.channel].onMessage(event.data.message);
           }
         });
       ''');
-      
+
       await loadUrl(url, headers: headers);
     } else if (UniversalPlatform.isLinux) {
       realController = WebviewManager()
@@ -61,6 +89,11 @@ class FireviewController {
       // Set up Linux title change listener
       (realController as WebViewController).listener?.onTitleChanged = (title) {
         _titleController.add(title);
+      };
+
+      // Set up Linux URL change listener
+      (realController as WebViewController).listener?.onUrlChanged = (url) {
+        _urlController.add(Uri.parse(url));
       };
 
       await (realController as WebViewController).initialize(url.toString());
@@ -74,63 +107,62 @@ class FireviewController {
             const PlatformWebViewControllerCreationParams());
       }
       realController = webview.WebViewController.fromPlatform(platform);
-      
-      // Set up Web title change listener
+
+      // Set up Web navigation delegate
       await (realController as webview.WebViewController).setNavigationDelegate(
         webview.NavigationDelegate(
           onPageFinished: (url) async {
             final title = await getTitle();
             _titleController.add(title);
+            _urlController.add(Uri.parse(url));
+          },
+          onUrlChange: (change) {
+            if (change.url != null) {
+              _urlController.add(Uri.parse(change.url!));
+            }
           },
         ),
       );
-      
+
       if (userAgent != null) {
         await setUserAgent(userAgent);
       }
       await loadUrl(url, headers: headers);
     } else if (UniversalPlatform.isMobile) {
       webview.WebViewController controller = webview.WebViewController();
-      await controller.setJavaScriptMode(
-        // not every library supports enabling / disabling javascript
-           webview.JavaScriptMode.unrestricted
-      );
-      
-      // Set up Mobile title change listener
+      await controller.setJavaScriptMode(webview.JavaScriptMode.unrestricted);
+
       await controller.setNavigationDelegate(
         webview.NavigationDelegate(
           onPageFinished: (url) async {
             final title = await getTitle();
             _titleController.add(title);
           },
+          onUrlChange: (change) {
+            if (change.url != null) {
+              _urlController.add(Uri.parse(change.url!));
+            }
+          },
         ),
       );
-      
+
       if (userAgent != null) {
         await controller.setUserAgent(userAgent);
       }
       realController = controller;
-      
+
       await loadUrl(url, headers: headers);
     }
-    
+
     _isInitialized = true;
   }
 
-  /// Add a listener for title changes
-  void addTitleChangeListener(void Function(String?) onTitleChange) {
-    _titleChangeListeners.add(onTitleChange);
-  }
-
-  /// Remove a title change listener
-  void removeTitleChangeListener(void Function(String?) onTitleChange) {
-    _titleChangeListeners.remove(onTitleChange);
-  }
-
   /// Navigate to the given [url]
-  Future<void> loadUrl(Uri url, {Map<String, String> headers = const {}}) async {
+  Future<void> loadUrl(Uri url,
+      {Map<String, String> headers = const {}}) async {
     if (UniversalPlatform.isWindows) {
-      await (realController as windows.WebviewController).loadUrl(url.toString());
+      await (realController as windows.WebviewController)
+          .loadUrl(url.toString());
     } else if (UniversalPlatform.isLinux) {
       await (realController as WebViewController).loadUrl(url.toString());
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
@@ -145,35 +177,34 @@ class FireviewController {
 
     if (UniversalPlatform.isWindows) {
       await evaluateJavascript(
-        "document.cookie='$name=$value;domain=$domain;path=/'"
-      );
+          "document.cookie='$name=$value;domain=$domain;path=/'");
     } else if (UniversalPlatform.isLinux) {
       await WebviewManager().setCookie(domain, name, value);
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
       await evaluateJavascript(
-        "document.cookie='$name=$value;domain=$domain;path=/'"
-      );
+          "document.cookie='$name=$value;domain=$domain;path=/'");
     }
   }
-
 
   /// Set the user agent string
   Future<void> setUserAgent(String userAgent) async {
     if (!_isInitialized) return;
 
     if (UniversalPlatform.isWindows) {
-      await (realController as windows.WebviewController).setUserAgent(userAgent);
+      await (realController as windows.WebviewController)
+          .setUserAgent(userAgent);
     } else if (UniversalPlatform.isLinux) {
       // Linux webview handles user agent during initialization
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
-      await (realController as webview.WebViewController).setUserAgent(userAgent);
+      await (realController as webview.WebViewController)
+          .setUserAgent(userAgent);
     }
   }
 
   /// Get the current page title
   Future<String?> getTitle() async {
     if (!_isInitialized) return null;
-    
+
     try {
       if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
         return await (realController as webview.WebViewController).getTitle();
@@ -199,10 +230,14 @@ class FireviewController {
       // Subscribe to web messages if this is our first channel
       if (_jsChannels.length == 1) {
         // Listen to the webMessage stream from the Windows controller
-        (realController as windows.WebviewController).webMessage.listen((message) {
+        (realController as windows.WebviewController)
+            .webMessage
+            .listen((message) {
           try {
             if (message != null) {
-              if (message is Map && message['channel'] != null && message['message'] != null) {
+              if (message is Map &&
+                  message['channel'] != null &&
+                  message['message'] != null) {
                 final channelName = message['channel'].toString();
                 if (_jsChannels.containsKey(channelName)) {
                   _jsChannels[channelName]?.call(message['message'].toString());
@@ -214,7 +249,7 @@ class FireviewController {
           }
         });
       }
-      
+
       // WebView2 has some bullshit that's not channels
       // https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/javascript/webview
       await (realController as windows.WebviewController).executeScript('''
@@ -229,7 +264,6 @@ class FireviewController {
           };
         }
       ''');
-
     } else if (UniversalPlatform.isLinux) {
       final channel = JavascriptChannel(
         name: name,
@@ -237,7 +271,7 @@ class FireviewController {
           onMessage(msg.message);
         },
       );
-      
+
       await (realController as WebViewController)
           .setJavaScriptChannels({channel});
 
@@ -278,10 +312,11 @@ class FireviewController {
     if (!_isInitialized) {
       throw UnsupportedError('JavaScript execution is disabled');
     }
-    
+
     try {
       if (UniversalPlatform.isWindows) {
-        return (realController as windows.WebviewController).executeScript(code);
+        return (realController as windows.WebviewController)
+            .executeScript(code);
       } else if (UniversalPlatform.isLinux) {
         return (realController as WebViewController).evaluateJavascript(code);
       } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
@@ -359,7 +394,7 @@ class FireviewController {
     if (!_isInitialized) return;
 
     await _titleController.close();
-    
+
     if (UniversalPlatform.isWindows) {
       await (realController as windows.WebviewController).dispose();
     } else if (UniversalPlatform.isLinux) {
