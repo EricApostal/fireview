@@ -186,6 +186,26 @@ class FireviewController {
     }
   }
 
+  /// Clear all cookies from the webview
+  Future<void> clearCookies() async {
+    if (!_isInitialized) return;
+
+    try {
+      if (UniversalPlatform.isWindows) {
+        return await (realController as windows.WebviewController)
+            .clearCookies();
+      } else if (UniversalPlatform.isLinux) {
+        return (realController as WebViewController).executeJavaScript(
+            r'''document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });''');
+      } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
+        await webview.WebViewCookieManager().clearCookies();
+      }
+    } catch (e) {
+      debugPrint('Error clearing cookies: $e');
+      rethrow;
+    }
+  }
+
   /// Set the user agent string
   Future<void> setUserAgent(String userAgent) async {
     if (!_isInitialized) return;
@@ -194,7 +214,7 @@ class FireviewController {
       await (realController as windows.WebviewController)
           .setUserAgent(userAgent);
     } else if (UniversalPlatform.isLinux) {
-      // Linux webview handles user agent during initialization
+      // hmmmm https://github.com/hlwhl/webview_cef/issues/72
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
       await (realController as webview.WebViewController)
           .setUserAgent(userAgent);
