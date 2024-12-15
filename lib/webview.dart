@@ -28,6 +28,8 @@ class Fireview extends StatelessWidget {
     } else if (UniversalPlatform.isWeb) {
       return FireviewWebWidget(controller: controller);
     }
-    return const Center(child:  Text("We could not recognize your device, and cannot load the webview."));
+    return const Center(
+        child: Text(
+            "We could not recognize your device, and cannot load the webview."));
   }
 }

@@ -330,7 +330,8 @@ class FireviewController {
   /// Evaluate JavaScript code in the webview
   Future<dynamic> evaluateJavascript(String code) async {
     if (!_isInitialized) {
-      throw UnsupportedError('JavaScript execution is disabled');
+      throw UnsupportedError(
+          'Tried to evaluating Javascript on an uninitialized controller!');
     }
 
     try {
@@ -419,6 +420,8 @@ class FireviewController {
       await (realController as windows.WebviewController).dispose();
     } else if (UniversalPlatform.isLinux) {
       await WebviewManager().dispose();
+    } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
+      // await (realController as webview.WebViewController).platform.
     }
     _jsChannels.clear();
     _isInitialized = false;

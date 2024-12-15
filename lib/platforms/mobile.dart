@@ -2,7 +2,7 @@ import 'package:fireview/controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class FireviewMobileWidget extends StatefulWidget {
+class FireviewMobileWidget extends StatelessWidget {
   final FireviewController controller;
   const FireviewMobileWidget({
     super.key,
@@ -10,12 +10,7 @@ class FireviewMobileWidget extends StatefulWidget {
   });
 
   @override
-  State<FireviewMobileWidget> createState() => _FireviewWidgetState();
-}
-
-class _FireviewWidgetState extends State<FireviewMobileWidget> {
-  @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: widget.controller.realController);
+    return WebViewWidget(controller: controller.realController);
   }
 }
