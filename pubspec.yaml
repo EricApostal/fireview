@@ -2,6 +2,7 @@ name: fireview
 description: "Cross-platform, inline Webviews for Flutter."
 version: 0.0.1
 homepage:
+publish_to: "none"
 
 environment:
   sdk: ^3.5.2
@@ -11,7 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   universal_platform: ^1.1.0
-  webview_cef: ^0.2.1
+  webview_cef:
+    path: ../webview_cef
   webview_windows: ^0.4.0
   webview_flutter_platform_interface: ^2.10.0
   webview_flutter: ^4.9.0
