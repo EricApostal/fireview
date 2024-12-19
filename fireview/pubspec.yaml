@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   universal_platform: ^1.1.0
   webview_cef:
-    path: ../webview_cef
+    git: https://github.com/OpenBonfire/webview_cef
   webview_windows: ^0.4.0
   webview_flutter_platform_interface: ^2.10.0
   webview_flutter: ^4.9.0
