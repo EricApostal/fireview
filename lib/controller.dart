@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:webview_cef/webview_cef.dart';
+import 'package:webview_cef/src/webview_inject_user_script.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_windows/webview_windows.dart' as windows;
 import 'package:webview_flutter/webview_flutter.dart' as webview;
@@ -82,9 +83,13 @@ class FireviewController {
 
       await loadUrl(url, headers: headers);
     } else if (UniversalPlatform.isLinux) {
-      realController = WebviewManager()
-          .createWebView(loading: const Text("Initializing webview..."));
-      await WebviewManager().initialize(userAgent: userAgent);
+      realController = WebviewManager().createWebView(
+        loading: const Text("Initializing webview..."),
+        injectUserScripts: InjectUserScripts(),
+      );
+      await WebviewManager().initialize(
+        userAgent: userAgent,
+      );
 
       // Set up Linux title change listener
       (realController as WebViewController).listener?.onTitleChanged = (title) {
