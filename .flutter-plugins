@@ -1,7 +1,6 @@
 # This is a generated file; do not edit or check into version control.
-flutter_iframe_webview=/home/eric/.pub-cache/hosted/pub.dev/flutter_iframe_webview-1.0.0/
-webview_cef=/home/eric/.pub-cache/git/webview_cef-76171a26763e7a5b43135a72032a4b877d27fc66/
-webview_flutter=/home/eric/.pub-cache/hosted/pub.dev/webview_flutter-4.10.0/
-webview_flutter_android=/home/eric/.pub-cache/hosted/pub.dev/webview_flutter_android-4.3.2/
-webview_flutter_wkwebview=/home/eric/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.18.4/
-webview_windows=/home/eric/.pub-cache/hosted/pub.dev/webview_windows-0.4.0/
+webview_cef=C:\\Users\\Eric\\AppData\\Local\\Pub\\Cache\\git\\webview_cef-76171a26763e7a5b43135a72032a4b877d27fc66\\
+webview_flutter=C:\\Users\\Eric\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\webview_flutter-4.10.0\\
+webview_flutter_android=C:\\Users\\Eric\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\webview_flutter_android-4.3.3\\
+webview_flutter_wkwebview=C:\\Users\\Eric\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\webview_flutter_wkwebview-3.18.4\\
+webview_windows=C:\\Users\\Eric\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\webview_windows-0.4.0\\

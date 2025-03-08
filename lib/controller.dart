@@ -426,7 +426,8 @@ class FireviewController {
     } else if (UniversalPlatform.isLinux) {
       await WebviewManager().dispose();
     } else if (UniversalPlatform.isMobile || UniversalPlatform.isWeb) {
-      // await (realController as webview.WebViewController).platform.
+      await (realController as webview.WebViewController)
+          .loadRequest(Uri.parse('about:blank'));
     }
     _jsChannels.clear();
     _isInitialized = false;
