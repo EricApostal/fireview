@@ -12,9 +12,6 @@ Here's the stack:
 - `webview_windows` backs Windows
 - `webview_cef` backs Linux *warning: this has a large bundle size because we embed chromium*
 
-*Note: At the current moment, Windows will still compile `webview_cef`, but will use `webview_windows`. This is not intended behavior and it will be tweaked to only depend on `webview_windows` in the near future.*
-
-
 ## How to get working
 You can generally just refer to the documentation for the individual packages. The only platform you need extra work for is for Linux, and that can be done by following the Linux instructions at https://github.com/hlwhl/webview_cef.
 
