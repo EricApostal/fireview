@@ -103,36 +103,36 @@ class FireviewController {
 
       await (realController as WebViewController).initialize(url.toString());
     } else if (UniversalPlatform.isWeb) {
-      late final PlatformWebViewController platform;
-      if (WebViewPlatform.instance is WebWebViewPlatform) {
-        // ignore: prefer_const_constructors
-        platform = WebWebViewController(WebWebViewControllerCreationParams());
-      } else {
-        platform = PlatformWebViewController(
-            const PlatformWebViewControllerCreationParams());
-      }
-      realController = webview.WebViewController.fromPlatform(platform);
+      // late final PlatformWebViewController platform;
+      // if (WebViewPlatform.instance is WebWebViewPlatform) {
+      //   // ignore: prefer_const_constructors
+      //   platform = WebWebViewController(WebWebViewControllerCreationParams());
+      // } else {
+      //   platform = PlatformWebViewController(
+      //       const PlatformWebViewControllerCreationParams());
+      // }
+      // realController = webview.WebViewController.fromPlatform(platform);
 
-      // Set up Web navigation delegate
-      await (realController as webview.WebViewController).setNavigationDelegate(
-        webview.NavigationDelegate(
-          onPageFinished: (url) async {
-            final title = await getTitle();
-            _titleController.add(title);
-            _urlController.add(Uri.parse(url));
-          },
-          onUrlChange: (change) {
-            if (change.url != null) {
-              _urlController.add(Uri.parse(change.url!));
-            }
-          },
-        ),
-      );
+      // // Set up Web navigation delegate
+      // await (realController as webview.WebViewController).setNavigationDelegate(
+      //   webview.NavigationDelegate(
+      //     onPageFinished: (url) async {
+      //       final title = await getTitle();
+      //       _titleController.add(title);
+      //       _urlController.add(Uri.parse(url));
+      //     },
+      //     onUrlChange: (change) {
+      //       if (change.url != null) {
+      //         _urlController.add(Uri.parse(change.url!));
+      //       }
+      //     },
+      //   ),
+      // );
 
-      if (userAgent != null) {
-        await setUserAgent(userAgent);
-      }
-      await loadUrl(url, headers: headers);
+      // if (userAgent != null) {
+      //   await setUserAgent(userAgent);
+      // }
+      // await loadUrl(url, headers: headers);
     } else if (UniversalPlatform.isMobile) {
       webview.WebViewController controller = webview.WebViewController();
       await controller.setJavaScriptMode(webview.JavaScriptMode.unrestricted);

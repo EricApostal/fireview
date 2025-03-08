@@ -26,7 +26,7 @@ class Fireview extends StatelessWidget {
     } else if (UniversalPlatform.isWindows) {
       return FireviewWindowsWidget(controller: controller);
     } else if (UniversalPlatform.isWeb) {
-      return FireviewWebWidget(controller: controller);
+      // return FireviewWebWidget(controller: controller);
     }
     return const Center(
         child: Text(
